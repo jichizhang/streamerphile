@@ -5,7 +5,7 @@ import time
 from contextlib import contextmanager
 from typing import Any, Iterable
 
-TTL_SECONDS = 3 * 24 * 60 * 60
+TTL_SECONDS = 7 * 24 * 60 * 60
 
 
 class Database:

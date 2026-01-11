@@ -25,6 +25,6 @@ Then open `http://127.0.0.1:5000`.
 
 ## Notes
 
-- Streams and streamer follower counts are cached in SQLite with a 3-day TTL.
+- Streams and streamer follower counts are cached in SQLite with a 7-day TTL.
 - The backend fetches streams on an interval and pushes updates to the frontend via SSE.
 
