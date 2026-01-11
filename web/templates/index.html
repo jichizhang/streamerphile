@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Streamerphile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-950 text-slate-100">
+    <!-- Floating actions -->
+    <div class="fixed right-4 top-4 z-40 flex items-center gap-2">
+      <button
+        id="settingsBtn"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-md bg-slate-800 text-slate-200 shadow-lg hover:bg-slate-700"
+        aria-label="Settings"
+        title="Settings"
+      >
+        <!-- Heroicons: cog-6-tooth (outline) -->
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.214 1.281c.063.374.313.686.647.87.216.118.421.25.616.394.324.24.74.327 1.122.18l1.229-.469a1.125 1.125 0 0 1 1.431.662l1.296 2.247c.275.476.195 1.086-.176 1.424l-.994.909c-.292.267-.437.65-.431 1.037.003.241-.006.482-.028.723-.03.39.127.774.414 1.055l.909.894c.38.374.47.982.19 1.45l-1.296 2.247a1.125 1.125 0 0 1-1.431.662l-1.229-.469a1.125 1.125 0 0 0-1.122.18c-.195.144-.4.276-.616.394-.334.184-.584.496-.647.87l-.214 1.281c-.09.542-.56.94-1.11.94h-2.593c-.55 0-1.02-.398-1.11-.94l-.214-1.281c-.063-.374-.313-.686-.647-.87a6.52 6.52 0 0 1-.616-.394 1.125 1.125 0 0 0-1.122-.18l-1.229.469a1.125 1.125 0 0 1-1.431-.662L2.98 16.667c-.275-.476-.195-1.086.176-1.424l.994-.909c.292-.267.437-.65.431-1.037a6.03 6.03 0 0 1 .028-.723c.03-.39-.127-.774-.414-1.055l-.909-.894a1.125 1.125 0 0 1-.19-1.45l1.296-2.247a1.125 1.125 0 0 1 1.431-.662l1.229.469c.382.147.798.06 1.122-.18.195-.144.4-.276.616-.394.334-.184.584-.496.647-.87l.214-1.281Z"
+          />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+      </button>
+
+      <button
+        id="shareBtn"
+        class="inline-flex h-10 items-center gap-2 rounded-md bg-slate-800 px-3 text-slate-200 shadow-lg hover:bg-slate-700"
+        aria-label="Share session"
+        title="Share session"
+      >
+        <!-- Heroicons: arrow-up-on-square (outline) -->
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75v6A2.25 2.25 0 0 0 6.75 21h10.5A2.25 2.25 0 0 0 19.5 18.75v-6M12 3v13.5m0-13.5 3 3m-3-3-3 3" />
+        </svg>
+        <span
+          id="shareBtnBadge"
+          class="hidden rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200"
+          >Copied</span
+        >
+      </button>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 py-6 pt-16">
+      <div
+        id="followedGames"
+        class="mt-4 columns-[320px] [column-gap:1rem]"
+      ></div>
+    </div>
+
+    <!-- Settings modal -->
+    <div id="settingsModal" class="fixed inset-0 z-50 hidden">
+      <div
+        id="settingsOverlay"
+        class="absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-200 ease-out"
+      ></div>
+      <div class="absolute inset-0 flex items-start justify-center p-4 sm:p-6">
+        <div
+          id="settingsPanel"
+          class="w-full max-w-3xl overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 text-slate-100 shadow-2xl
+                 opacity-0 translate-y-2 scale-95 transform transition-all duration-200 ease-out"
+        >
+          <div class="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+            <div class="text-sm font-semibold text-slate-200">Settings</div>
+            <button
+              id="closeSettingsBtn"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-800 text-slate-200 hover:bg-slate-700"
+              aria-label="Close settings"
+              title="Close settings"
+            >
+              <!-- Heroicons: x-mark (outline) -->
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="max-h-[80vh] overflow-y-auto p-4">
+            <div class="grid gap-4 lg:grid-cols-2">
+              <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+                <div class="text-sm font-semibold text-slate-200">Search games</div>
+                <div class="mt-2 flex gap-2">
+                  <input
+                    id="searchInput"
+                    class="w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                    placeholder="Type a game name..."
+                  />
+                  <button
+                    id="searchBtn"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-md bg-indigo-600 text-sm hover:bg-indigo-500 disabled:opacity-60"
+                    aria-label="Search games"
+                    title="Search games"
+                  >
+                    <!-- Heroicons: magnifying-glass (outline) -->
+                    <svg
+                      class="h-5 w-5 text-white"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div id="searchResults" class="mt-3 space-y-2"></div>
+              </div>
+
+              <div class="space-y-4">
+                <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+                  <div class="text-sm font-semibold text-slate-200">Filters</div>
+                  <div class="mt-3 space-y-3 text-sm">
+                    <div class="flex items-center gap-2">
+                      <input id="verifiedOnly" type="checkbox" class="h-4 w-4 rounded border-slate-700 bg-slate-950" />
+                      <label for="verifiedOnly" class="text-slate-200">Affiliate or Partner only</label>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                      <div>
+                        <div class="text-xs text-slate-400">Min viewers</div>
+                        <input
+                          id="minViewers"
+                          type="number"
+                          min="0"
+                          class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-2 py-1.5 text-sm outline-none focus:border-indigo-500"
+                          placeholder="0"
+                        />
+                      </div>
+                      <div>
+                        <div class="text-xs text-slate-400">Max viewers</div>
+                        <input
+                          id="maxViewers"
+                          type="number"
+                          min="0"
+                          class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-2 py-1.5 text-sm outline-none focus:border-indigo-500"
+                          placeholder="∞"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                      <div>
+                        <div class="text-xs text-slate-400">Min followers</div>
+                        <input
+                          id="minFollowers"
+                          type="number"
+                          min="0"
+                          class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-2 py-1.5 text-sm outline-none focus:border-indigo-500"
+                          placeholder="0"
+                        />
+                      </div>
+                      <div>
+                        <div class="text-xs text-slate-400">Max followers</div>
+                        <input
+                          id="maxFollowers"
+                          type="number"
+                          min="0"
+                          class="mt-1 w-full rounded-md border border-slate-800 bg-slate-950 px-2 py-1.5 text-sm outline-none focus:border-indigo-500"
+                          placeholder="∞"
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+                  <div class="flex items-center justify-between">
+                    <div class="text-sm font-semibold text-slate-200">Ignored channels</div>
+                    <button
+                      id="clearIgnoredBtn"
+                      class="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-300 hover:bg-red-500/10 hover:text-red-200"
+                      aria-label="Clear ignored channels"
+                      title="Clear ignored channels"
+                    >
+                      <!-- Heroicons: trash (outline) -->
+                      <svg
+                        class="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14.74 9 14.394 18m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div id="ignoredList" class="mt-2 space-y-1 text-sm text-slate-300"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm modal -->
+    <div id="confirmModal" class="fixed inset-0 z-[60] hidden">
+      <div id="confirmOverlay" class="absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-200 ease-out"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div
+          id="confirmPanel"
+          class="w-full max-w-md overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 text-slate-100 shadow-2xl
+                 opacity-0 translate-y-2 scale-95 transform transition-all duration-200 ease-out"
+        >
+          <div class="border-b border-slate-800 px-4 py-3">
+            <div id="confirmTitle" class="text-sm font-semibold text-slate-200">Confirm</div>
+          </div>
+          <div class="px-4 py-4">
+            <div id="confirmBody" class="text-sm text-slate-300"></div>
+          </div>
+          <div class="flex items-center justify-end gap-2 border-t border-slate-800 px-4 py-3">
+            <button
+              id="confirmCancelBtn"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-800 text-slate-200 hover:bg-slate-700"
+              aria-label="Cancel"
+              title="Cancel"
+              type="button"
+            >
+              <!-- Heroicons: x-mark (outline) -->
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <button
+              id="confirmOkBtn"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-500/20 text-red-100 ring-1 ring-red-500/30 hover:bg-red-500/30"
+              aria-label="Confirm"
+              title="Confirm"
+              type="button"
+            >
+              <!-- Heroicons: check (outline) -->
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__BOOT__ = {{ boot_json | safe }};
+    </script>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
+
+

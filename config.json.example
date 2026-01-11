@@ -1,0 +1,9 @@
+{
+  "twitch_client_id": "YOUR_TWITCH_CLIENT_ID",
+  "twitch_client_secret": "YOUR_TWITCH_CLIENT_SECRET",
+  "debug": false,
+  "fetch_interval_seconds": 300,
+  "max_streams_per_game": 200,
+  "languages": [],
+  "database_path": "data/streamerphile.sqlite3"
+}
