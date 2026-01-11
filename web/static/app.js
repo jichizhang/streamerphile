@@ -870,7 +870,14 @@ function ensureStreamRow(existingRow, stream) {
   linkName.textContent = stream.user_name || "Unknown streamer";
   row.querySelector("[data-stream-badge]").innerHTML = badgeHtml(stream.broadcaster_type);
   row.querySelector("[data-stream-viewers]").textContent = `Viewers: ${formatNumber(stream.viewer_count)}`;
-  row.querySelector("[data-stream-followers]").textContent = `Followers: ${formatNumber(stream.follower_count)}`;
+  const followersEl = row.querySelector("[data-stream-followers]");
+  const isVerified = stream.broadcaster_type === "partner" || stream.broadcaster_type === "affiliate";
+  if (isVerified) {
+    followersEl.textContent = `Followers: ${formatNumber(stream.follower_count)}`;
+    followersEl.style.display = "";
+  } else {
+    followersEl.style.display = "none";
+  }
   row.querySelector("[data-stream-title]").textContent = stream.title || "";
 
   return row;

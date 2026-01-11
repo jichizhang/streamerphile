@@ -212,7 +212,8 @@ class Database:
             rows = conn.execute(
                 """
                 SELECT user_id FROM streamer_profiles
-                WHERE follower_expires_at IS NULL OR follower_expires_at <= ?
+                WHERE (follower_expires_at IS NULL OR follower_expires_at <= ?)
+                  AND broadcaster_type IN ('partner', 'affiliate')
                 ORDER BY COALESCE(follower_expires_at, 0) ASC
                 LIMIT ?
                 """,
