@@ -117,7 +117,6 @@ let _masonryResizeTimer = null;
 function updateMasonryColumns(cardCount) {
   const root = $("followedGames");
   if (!root) return;
-  Ratelimit-Reset 
   const count = Math.max(0, Number(cardCount) || 0);
   const w = root.clientWidth || 0;
   const fit = Math.max(1, Math.floor((w + MASONRY_COL_GAP) / (MASONRY_COL_WIDTH + MASONRY_COL_GAP)));
