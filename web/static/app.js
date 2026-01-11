@@ -964,22 +964,73 @@ function updateGameStreams(card, streams) {
 
   empty.classList.toggle("hidden", arr.length !== 0);
 
+  // Versioning so we can safely schedule a second-pass reconcile after exit animations.
+  card._streamsRenderVersion = (card._streamsRenderVersion || 0) + 1;
+  const myVersion = card._streamsRenderVersion;
+
   const existing = new Map();
   list.querySelectorAll("[data-stream-id]").forEach((el) => existing.set(el.dataset.streamId, el));
+
+  const desiredIds = new Set(arr.map((s) => String(s.id)));
+  const removals = [];
+  for (const [sid, row] of existing.entries()) {
+    if (desiredIds.has(sid)) continue;
+    if (row.dataset.exiting === "1") continue;
+    removals.push(row);
+  }
 
   const seen = new Set();
   for (const s of arr) {
     const sid = String(s.id);
     const prev = existing.get(sid);
     const row = ensureStreamRow(prev || null, s);
-    list.appendChild(row); // keep order; moves if needed
     seen.add(sid);
-    if (!prev) animateEnter(row);
+    if (!prev) {
+      list.appendChild(row);
+      animateEnter(row);
+    }
   }
 
-  for (const [sid, row] of existing.entries()) {
-    if (seen.has(sid)) continue;
+  // Start exit animations first, without reordering the remaining rows. This keeps the removed
+  // stream animating "in place" rather than jumping due to reordering.
+  for (const row of removals) {
     animateExitAndRemove(row);
+  }
+
+  // Second pass: after exit animations, reconcile order + remove any stale rows.
+  if (removals.length) {
+    setTimeout(() => {
+      if (card._streamsRenderVersion !== myVersion) return;
+
+      const latest = streams || [];
+      const latestIds = new Set(latest.map((s) => String(s.id)));
+
+      // Remove any non-exiting rows not present anymore.
+      list.querySelectorAll("[data-stream-id]").forEach((el) => {
+        if (el.dataset.exiting === "1") return;
+        if (!latestIds.has(el.dataset.streamId)) el.remove();
+      });
+
+      // Rebuild list in desired order (excluding exiting nodes; they should be gone by now).
+      const fragment = document.createDocumentFragment();
+      for (const s of latest) {
+        const sid = String(s.id);
+        const prev = list.querySelector(`[data-stream-id="${CSS.escape(sid)}"]`);
+        const row = ensureStreamRow(prev || null, s);
+        fragment.appendChild(row);
+      }
+      list.appendChild(fragment);
+    }, 320);
+  } else {
+    // No removals -> safe to reorder immediately.
+    const fragment = document.createDocumentFragment();
+    for (const s of arr) {
+      const sid = String(s.id);
+      const prev = existing.get(sid) || list.querySelector(`[data-stream-id="${CSS.escape(sid)}"]`);
+      const row = ensureStreamRow(prev || null, s);
+      fragment.appendChild(row);
+    }
+    list.appendChild(fragment);
   }
 }
 
